@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fashion Ecommerce</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
+
+body{
+  background:#f5f5f5;
+}
+
+/* TOP BAR */
+.top-bar{
+  background:#111;
+  color:white;
+  display:flex;
+  justify-content:flex-end;
+  padding:10px 40px;
+  gap:20px;
+}
+
+.top-bar a{
+  color:white;
+  text-decoration:none;
+}
+
+/* NAVBAR */
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 40px;
+  background:white;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.logo-container{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo-img{
+  width:32px;
+  height:32px;
+}
+
+.menu button{
+  margin:0 5px;
+  padding:10px;
+  border:none;
+  background:#111;
+  color:white;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+/* SEARCH */
+.search-box input{
+  padding:8px;
+  width:200px;
+  border-radius:20px;
+  border:1px solid #ccc;
+}
+
+/* CART */
+.cart{
+  background:#111;
+  color:white;
+  padding:8px 15px;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+/* PRODUCTS */
+.products{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:20px;
+  padding:30px;
+}
+
+.product-card{
+  width:240px;
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.product-card img{
+  width:100%;
+  height:195px;
+  object-fit:cover;
+}
+
+.product-info{
+  padding:15px;
+  text-align:center;
+}
+
+.price{
+  font-weight:bold;
+  margin:10px 0;
+}
+
+.buy-btn{
+  padding:10px;
+  background:#111;
+  color:white;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+.title{
+  text-align:center;
+  padding:20px;
+}
+
+/* CART BOX */
+.cart-box{
+  position:fixed;
+  right:20px;
+  top:80px;
+  width:250px;
+  background:white;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  padding:10px;
+  display:none;
+}
+
+/* PRODUCT TABLE */
+.table-container{
+  width:90%;
+  margin:30px auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.table-container h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.product-table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.product-table th,
+.product-table td{
+  border:1px solid #ddd;
+  padding:12px;
+  text-align:center;
+}
+
+.product-table th{
+  background:#111;
+  color:white;
+}
+
+.product-table img{
+  width:80px;
+  height:80px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.table-btn{
+  padding:8px 15px;
+  border:none;
+  background:#111;
+  color:white;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- TOP -->
+<div class="top-bar">
+  <a href="#">Login</a>
+  <a href="#">Account</a>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+  <div class="logo-container">
+    <img class="logo-img" src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png">
+    <b>FASHION</b>
+  </div>
+
+  <div class="menu">
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('men')">Men</button>
+    <button onclick="showPage('kids')">Kids</button>
+    <button onclick="showPage('women')">Women</button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-box">
+    <input type="text" placeholder="Search products..." onkeyup="searchProduct(this.value)">
+  </div>
+
+  <!-- CART -->
+  <div class="cart" onclick="toggleCart()">
+    🛒 Cart (<span id="cartCount">0</span>)
+  </div>
+
+</div>
+
+<!-- CART BOX -->
+<div class="cart-box" id="cartBox">
+  <h4>Your Cart</h4>
+  <div id="cartItems"></div>
+</div>
+
+<!-- PRODUCT TABLE -->
+<div class="table-container">
+
+  <h2>Products Table</h2>
+
+  <table class="product-table">
+
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody id="productTableBody"></tbody>
+
+  </table>
+
+</div>
+
+<!-- CONTENT -->
+<div id="content"></div>
+
+<script>
+
+let cart = [];
+
+const productsData = [
+
+  {
+    name:"Men T-Shirt",
+    price:500,
+    img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=500"
+  },
+
+  {
+    name:"Men Shoes",
+    price:3000,
+    img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=500"
+  },
+
+  {
+    name:"Kids Wear",
+    price:500,
+    img:"https://images.unsplash.com/photo-1519238359922-989348752efb?q=80&w=500"
+  },
+
+  {
+    name:"Women Dress",
+    price:1200,
+    img:"https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=500"
+  }
+
+];
+
+function showPage(page){
+
+  let html = `<h2 class="title">${page.toUpperCase()} COLLECTION</h2><div class="products">`;
+
+  productsData.forEach(p=>{
+
+    html += `
+      <div class="product-card">
+
+        <img src="${p.img}">
+
+        <div class="product-info">
+
+          <h3>${p.name}</h3>
+
+          <div class="price">₹${p.price}</div>
+
+          <button class="buy-btn"
+            onclick="addToCart('${p.name}',${p.price})">
+
+            Add to Cart
+
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+  html += "</div>";
+
+  document.getElementById("content").innerHTML = html;
+}
+
+/* PRODUCT TABLE */
+function loadProductTable(){
+
+  let html = "";
+
+  productsData.forEach(p => {
+
+    html += `
+      <tr>
+
+        <td>
+          <img src="${p.img}">
+        </td>
+
+        <td>${p.name}</td>
+
+        <td>₹${p.price}</td>
+
+        <td>
+
+          <button class="table-btn"
+            onclick="addToCart('${p.name}',${p.price})">
+
+            Add to Cart
+
+          </button>
+
+        </td>
+
+      </tr>
+    `;
+
+  });
+
+  document.getElementById("productTableBody").innerHTML = html;
+}
+
+/* CART */
+function addToCart(name,price){
+
+  cart.push({name,price});
+
+  document.getElementById("cartCount").innerText = cart.length;
+
+  updateCart();
+}
+
+function updateCart(){
+
+  let box = document.getElementById("cartItems");
+
+  box.innerHTML = "";
+
+  cart.forEach((item,i)=>{
+
+    box.innerHTML += `
+      <p>${item.name} - ₹${item.price}</p>
+    `;
+
+  });
+}
+
+function toggleCart(){
+
+  let box = document.getElementById("cartBox");
+
+  box.style.display =
+    box.style.display === "block"
+    ? "none"
+    : "block";
+}
+
+/* SEARCH */
+function searchProduct(value){
+
+  value = value.toLowerCase();
+
+  let filtered = productsData.filter(p =>
+    p.name.toLowerCase().includes(value)
+  );
+
+  let html = `<h2 class="title">SEARCH RESULTS</h2><div class="products">`;
+
+  filtered.forEach(p=>{
+
+    html += `
+      <div class="product-card">
+
+        <img src="${p.img}">
+
+        <div class="product-info">
+
+          <h3>${p.name}</h3>
+
+          <div class="price">₹${p.price}</div>
+
+          <button class="buy-btn"
+            onclick="addToCart('${p.name}',${p.price})">
+
+            Add to Cart
+
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+  html += "</div>";
+
+  document.getElementById("content").innerHTML = html;
+}
+
+/* DEFAULT */
+showPage("home");
+loadProductTable();
+
+</script>
+
+</body>
+</html>
