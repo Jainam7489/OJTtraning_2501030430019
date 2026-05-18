@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fashion Ecommerce</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+  
+body {
+  background: #f5f5f5;
+}
+  
+/* LOGIN PAGE */
+.login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+  
+.login-box {
+  width: 100%;
+  max-width: 350px; /* Let Bootstrap layout handle the container, capping width here */
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+}
+  
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+  
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #111;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+  
+/* TOP BAR */
+.top-bar {
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 40px;
+  gap: 20px;
+}
+  
+.top-bar a {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+  
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 100;
+}
+  
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+  
+.logo-img {
+  width: 32px;
+  height: 32px;
+}
+  
+.menu button {
+  margin: 0 5px;
+  padding: 10px;
+  border: none;
+  background: #111;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
+  
+.search-box input {
+  padding: 8px;
+  width: 200px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+
+/* SETTINGS DROPDOWN */
+.settings-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.settings-btn {
+  background: #111;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: opacity 0.2s;
+}
+
+.settings-btn:hover {
+  opacity: 0.9;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  min-width: 230px;
+  box-shadow: 0px 8px 24px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  padding: 8px 0;
+  margin-top: 8px;
+  z-index: 1000;
+}
+
+.dropdown-content a {
+  color: #333;
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  transition: background 0.2s;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: #f5f5f5;
+  color: #111;
+}
+
+.settings-dropdown:hover .dropdown-content {
+  display: block;
+}
+  
+.cart {
+  background: #111;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+  
+/* SLIDER */
+.slider {
+  width: 100%; /* Changed from 90% to span your Bootstrap grid container beautifully */
+  height: 400px;
+  margin: 30px auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+}
+  
+.slide {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  opacity: 0;
+  transition: 1s;
+}
+  
+.slide.active {
+  opacity: 1;
+}
+  
+/* PRODUCTS CARD OVERRIDES FOR BOOTSTRAP */
+.product-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 24px; /* Added spacing between rows on mobile wrapping */
+}
+  
+.product-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+  
+.product-info {
+  padding: 15px;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+  
+.price {
+  margin: 10px 0;
+  font-weight: bold;
+}
+  
+.buy-btn {
+  width: 100%;
+  padding: 10px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+  
+.title {
+  text-align: center;
+  padding: 20px;
+}
+  
+/* CART BOX */
+.cart-box {
+  position: fixed;
+  right: 20px;
+  top: 80px;
+  width: 320px;
+  background: white;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  display: none;
+  border-radius: 10px;
+  z-index: 999;
+}
+  
+.qty-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: #111;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+  
+/* CHECKOUT BUTTON IN CART */
+.checkout-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 13px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+  
+.checkout-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+  
+.checkout-btn:active {
+  transform: translateY(0);
+}
+  
+/* PRODUCT TABLE */
+.table-container {
+  width: 100%; /* Removed hardcoded 75% width so Bootstrap row/col classes dictate layout widths */
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+  
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+  
+.product-table th,
+.product-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+  
+.product-table th {
+  background: #111;
+  color: white;
+}
+  
+.product-table img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+  
+.table-btn {
+  padding: 6px 12px;
+  border: none;
+  background: #111;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+}
+  
+/* =====================
+   PAYMENT MODAL
+   ===================== */
+.payment-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  animation: fadeIn 0.25s ease;
+}
+  
+.payment-overlay.open {
+  display: flex;
+}
+  
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+  
+.payment-modal {
+  background: #fff;
+  width: 480px;
+  max-width: 95vw;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s cubic-bezier(.22,.68,0,1.2);
+}
+  
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+  
+.payment-header {
+  background: #111;
+  color: white;
+  padding: 22px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+  
+.payment-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+  
+.payment-header .close-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+  
+.payment-header .close-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+  
+.payment-body {
+  padding: 28px;
+}
+  
+/* Order Summary inside modal */
+.order-summary {
+  background: #f8f8f8;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+  
+.order-summary h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+  
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #333;
+  padding: 4px 0;
+}
+  
+.order-row.total {
+  border-top: 1px solid #ddd;
+  margin-top: 8px;
+  padding-top: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #111;
+}
+  
+/* Payment Method Tabs */
+.method-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+  
+.method-tab {
+  flex: 1;
+  padding: 10px 6px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  text-align: center;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+  
+.method-tab .tab-icon {
+  font-size: 20px;
+}
+  
+.method-tab.active {
+  border-color: #111;
+  background: #111;
+  color: white;
+}
+  
+/* Form Fields */
+.form-group {
+  margin-bottom: 16px;
+}
+  
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+  
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #111;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+  
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #111;
+}
+  
+/* Removed custom .form-row display grid layout to prevent conflicts with Bootstrap grid inside forms */
+.form-row {
+  margin-bottom: 0;
+}
+  
+/* UPI Panel */
+.upi-panel {
+  display: none;
+}
+  
+.upi-panel.visible {
+  display: block;
+}
+  
+.card-panel {
+  display: block;
+}
+  
+.card-panel.hidden {
+  display: none;
+}
+  
+/* Pay Button */
+.pay-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #111 0%, #3a3a3a 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+  
+.pay-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+  
+.pay-btn:active {
+  transform: translateY(0);
+}
+  
+/* Security Note */
+.security-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: #999;
+}
+  
+/* Success State */
+.payment-success {
+  display: none;
+  text-align: center;
+  padding: 40px 28px;
+}
+  
+.success-icon {
+  width: 72px;
+  height: 72px;
+  background: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  margin: 0 auto 20px;
+  animation: popIn 0.4s cubic-bezier(.22,.68,0,1.4);
+}
+  
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+  
+.payment-success h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #111;
+  margin-bottom: 10px;
+}
+  
+.payment-success p {
+  color: #777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+  
+.done-btn {
+  margin-top: 24px;
+  padding: 12px 36px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+  
+.done-btn:hover { opacity: 0.8; }
+</style>
+</head>
+ 
+<body>
+ 
+<!-- LOGIN PAGE -->
+<div class="login-page" id="loginPage">
+  <div class="login-box">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Enter Username">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button class="login-btn" onclick="login()">Login</button>
+  </div>
+</div>
+ 
+<!-- REGISTRATION PAGE -->
+<div class="login-page" id="registerPage">
+  <div class="login-box">
+    <h2>Registration Form</h2>
+    <input type="text" id="regUsername" placeholder="Enter Username">
+    <input type="email" id="regEmail" placeholder="Enter Email">
+    <input type="password" id="regPassword" placeholder="Enter Password">
+    <button class="login-btn" onclick="registerUser()">Register</button>
+  </div>
+</div>
+ 
+<!-- TOP BAR -->
+<div class="top-bar">
+  <a onclick="openLogin()">Login</a>
+  <a onclick="openRegister()">Account</a>
+</div>
+ 
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo-container">
+    <img class="logo-img" src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png">
+    <b>FASHION</b>
+  </div>
+  <div class="menu">
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('men')">Men</button>
+    <button onclick="showPage('women')">Women</button>
+    <button onclick="showPage('kids')">Kids</button>
+  </div>
+  <div class="search-box">
+    <input type="text" placeholder="Search products..." onkeyup="searchProduct(this.value)">
+  </div>
+
+  <!-- WORKING SETTINGS DROPDOWN -->
+  <div class="settings-dropdown">
+    <button class="settings-btn">⚙️ Settings</button>
+    <div class="dropdown-content">
+      <a href="#" onclick="handleSetting('profile')">My Profile</a>
+      <a href="#" onclick="handleSetting('plus')">Fashion mart Zone</a>
+      <a href="#" onclick="handleSetting('orders')">Orders</a>
+      <a href="#" onclick="handleSetting('wishlist')">Wishlist</a>
+      <a href="#" onclick="handleSetting('seller')">Become a Seller</a>
+      <a href="#" onclick="handleSetting('rewards')">Rewards</a>
+      <a href="#" onclick="handleSetting('gift')">Gift Cards</a>
+      <a href="#" onclick="handleSetting('notifications')">Notification Preferences</a>
+      <a href="#" onclick="handleSetting('care')">24x7 Customer Care</a>
+      <a href="#" onclick="handleSetting('advertise')">Advertise</a>
+    </div>
+  </div>
+
+  <div class="cart" onclick="toggleCart()">
+    🛒 Cart (<span id="cartCount">0</span>)
+  </div>
+</div>
+ 
+<!-- CART -->
+<div class="cart-box" id="cartBox">
+  <h3>Your Cart</h3>
+  <div id="cartItems"></div>
+  <h3 style="margin-top:15px;">Total: ₹<span id="totalPrice">0</span></h3>
+  <button class="checkout-btn" onclick="openPayment()">
+    💳 Proceed to Payment
+  </button>
+</div>
+ 
+<!-- SLIDER -->
+<div class="slider">
+  <img class="slide active" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200">
+  <img class="slide" src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1200">
+  <img class="slide" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200">
+</div>
+ 
+<!-- CONTENT (Now wrapped globally within Bootstrap grid layout classes inside Javascript functions) -->
+<div id="content"></div>
+ 
+<!-- PRODUCT TABLE -->
+<div class="table-container">
+  <h2 class="title">Products Table</h2>
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="productTableBody"></tbody>
+  </table>
+</div>
+ 
+<!-- =====================
+      PAYMENT MODAL
+      ===================== -->
+<div class="payment-overlay" id="paymentOverlay">
+  <div class="payment-modal">
+ 
+    <!-- Header -->
+    <div class="payment-header">
+      <h2>💳 Secure Checkout</h2>
+      <button class="close-btn" onclick="closePayment()">✕</button>
+    </div>
+ 
+    <!-- Body -->
+    <div class="payment-body" id="paymentBody">
+ 
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <h4>Order Summary</h4>
+        <div id="modalOrderItems"></div>
+        <div class="order-row total">
+          <span>Total</span>
+          <span>₹<span id="modalTotal">0</span></span>
+        </div>
+      </div>
+ 
+      <!-- Payment Method Tabs -->
+      <div class="method-tabs">
+        <button class="method-tab active" onclick="switchMethod('card', this)">
+          <span class="tab-icon">💳</span>
+          Card
+        </button>
+        <button class="method-tab" onclick="switchMethod('upi', this)">
+          <span class="tab-icon">📱</span>
+          UPI
+        </button>
+        <button class="method-tab" onclick="switchMethod('cod', this)">
+          <span class="tab-icon">🏠</span>
+          Cash on Delivery
+        </button>
+      </div>
+ 
+      <!-- Card Panel -->
+      <div class="card-panel" id="cardPanel">
+        <div class="form-group">
+          <label>Cardholder Name</label>
+          <input type="text" id="cardName" placeholder="Name on card">
+        </div>
+        <div class="form-group">
+          <label>Card Number</label>
+          <input type="text" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Expiry</label>
+            <input type="text" id="cardExp" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="password" id="cardCvv" placeholder="•••" maxlength="3">
+          </div>
+        </div>
+      </div>
+ 
+      <!-- UPI Panel -->
+      <div class="upi-panel" id="upiPanel">
+        <div class="form-group">
+          <label>UPI ID</label>
+          <input type="text" id="upiId" placeholder="yourname@upi">
+        </div>
+      </div>
+ 
+      <!-- COD Panel -->
+      <div class="upi-panel" id="codPanel">
+        <div class="order-summary" style="text-align:center; color:#555; font-size:14px; line-height:1.8;">
+          🏠 Pay cash when your order arrives.<br>
+          No advance payment needed.
+        </div>
+      </div>
+ 
+      <!-- Pay Button -->
+      <button class="pay-btn" onclick="processPayment()">
+        🔒 Pay ₹<span id="payBtnTotal">0</span>
+      </button>
+ 
+      <div class="security-note">
+        🔒 256-bit SSL encrypted &amp; secure
+      </div>
+    </div>
+ 
+    <!-- Success State -->
+    <div class="payment-success" id="paymentSuccess">
+      <div class="success-icon">✓</div>
+      <h2>Payment Successful!</h2>
+      <p>Your order has been placed.<br>You'll receive a confirmation shortly.</p>
+      <button class="done-btn" onclick="closePayment()">Continue Shopping</button>
+    </div>
+ 
+  </div>
+</div>
+ 
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+let cart = [];
+let activeMethod = 'card';
+let currentUser = null; 
+ 
+/* PRODUCTS */
+const productsData = [
+  { name:"Men T-Shirt",       category:"men",   price:500,  img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=500" },
+  { name:"Men Shoes",         category:"men",   price:3000, img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=500" },
+  { name:"Men Watch",         category:"men",   price:5000, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAHQeg-uAyU6ZtwYOSDLOtVQFDMQrZTwJDZw&s=500" },
+  { name:"Men Goggles",       category:"men",   price:2700, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVIcDssn8Gk0-kWXJFXDHcH8JZmfAqllEwxQ&s=500" },
+  { name:"Women Dress",       category:"women", price:1200, img:"https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=500" },
+  { name:"Women's makeup kit",category:"women", price:7000, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNbZK_9NuI31u_yJkYi7vvCMQYwWgxHHvVNw&s=500" },
+  { name:"Women Bag",         category:"women", price:2000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=500" },
+  { name:"Women Shoe",        category:"women", price:4000, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaiiIWegfciA-dkTwymUFcstxnzddfNtbBnQ&s=500" },
+  { name:"Kids Wear",         category:"kids",  price:500,  img:"https://images.unsplash.com/photo-1519238359922-989348752efb?q=80&w=500" },
+  { name:"Kids shoe",         category:"kids",  price:2000, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTR6poe6kh9fdVXa8xsjlC-xfqFLU5TFrOnpA&s=500" }
+];
+ 
+/* LOGIN */
+function openLogin(){ document.getElementById("loginPage").style.display="flex"; }
+function login(){
+  let u=document.getElementById("username").value;
+  let p=document.getElementById("password").value;
+  if(u && p){ 
+    currentUser = u;
+    alert("Login Successful! Welcome, " + currentUser); 
+    document.getElementById("loginPage").style.display="none"; 
+  }
+  else alert("Please Enter Username & Password");
+}
+ 
+/* REGISTER */
+function openRegister(){ document.getElementById("registerPage").style.display="flex"; }
+function registerUser(){
+  let u=document.getElementById("regUsername").value;
+  let e=document.getElementById("regEmail").value;
+  let p=document.getElementById("regPassword").value;
+  if(u&&e&&p){ alert("Registration Successful"); document.getElementById("registerPage").style.display="none"; }
+  else alert("Please Fill All Fields");
+}
+
+/* SETTINGS HANDLER FUNCTIONS */
+function handleSetting(action) {
+  if(['profile', 'plus', 'orders', 'wishlist', 'notifications'].includes(action)) {
+    if(!currentUser) {
+      alert("Please login first to view your panel configuration.");
+      openLogin();
+      return;
+    }
+  }
+
+  switch(action) {
+    case 'profile':
+      document.getElementById("content").innerHTML = `
+        <div class="table-container">
+          <h2 class="title">My Account Profile</h2>
+          <p style="text-align:center; padding:10px; font-size:16px;"><strong>Username:</strong> ${currentUser}</p>
+          <p style="text-align:center; padding:10px; color:#666;">Status: Verified Premium Fashion Member</p>
+        </div>`;
+      break;
+    case 'plus':
+      alert("Welcome to Flipkart Plus Zone! You have 50 SuperCoins available.");
+      break;
+    case 'orders':
+      document.getElementById("content").innerHTML = `
+        <div class="table-container">
+          <h2 class="title">Your Active Orders</h2>
+          <p style="text-align:center; color:#777; padding:20px;">No recent shipments tracking. Your dashboard is clear!</p>
+        </div>`;
+      break;
+    case 'wishlist':
+      alert("Your Wishlist has 0 items. Start exploring our premium collections to add products!");
+      break;
+    case 'seller':
+      let sellConfirm = confirm("Do you want to switch to the Merchant Onboarding portal and sell products?");
+      if(sellConfirm) alert("Redirecting to Fashion Seller Registry...");
+      break;
+    case 'rewards':
+      alert("Congratulations! You unlocked a flat 10% coupon code: FASHION10");
+      break;
+    case 'gift':
+      let voucher = prompt("Enter your 16-digit Gift Card number to redeem balances:");
+      if(voucher) alert("Voucher card authenticated securely!");
+      break;
+    case 'notifications':
+      alert("Preferences saved: Promotion updates via email are enabled.");
+      break;
+    case 'care':
+      alert("Dialing Customer Support: 1800-FASHION-CARE (Available 24x7)");
+      break;
+    case 'advertise':
+      alert("To place ad banners here, please drop an inquiry at ads@fashioncommerce.local");
+      break;
+  }
+}
+ 
+/* SHOW PAGE USING BOOTSTRAP GRID */
+function showPage(page){
+  let filtered = page==="home" ? productsData : productsData.filter(p=>p.category===page);
+  
+  // Wrap with Bootstrap's container and row structures
+  let html=`
+  <div class="container my-4">
+    <h2 class="title mb-4">${page.toUpperCase()} COLLECTION</h2>
+    <div class="row g-4">`;
+    
+  filtered.forEach(p=>{
+    html+=`
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="product-card">
+          <img src="${p.img}">
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <div class="price">₹${p.price}</div>
+            <button class="buy-btn" onclick="addToCart('${p.name}',${p.price})">Add To Cart</button>
+          </div>
+        </div>
+      </div>`;
+  });
+  
+  html+="</div></div>";
+  document.getElementById("content").innerHTML=html;
+}
+ 
+/* LOAD PRODUCT TABLE */
+function loadProductTable(){
+  let html="";
+  productsData.forEach(p=>{
+    html+=`<tr><td><img src="${p.img}"></td><td>${p.name}</td><td>${p.category}</td><td>₹${p.price}</td><td><button class="table-btn" onclick="addToCart('${p.name}',${p.price})">Add To Cart</button></td></tr>`;
+  });
+  document.getElementById("productTableBody").innerHTML=html;
+}
+ 
+/* ADD TO CART */
+function addToCart(name,price){
+  let found=cart.find(item=>item.name===name);
+  if(found) found.qty++;
+  else cart.push({name,price,qty:1});
+  updateCart();
+}
+ 
+/* UPDATE CART */
+function updateCart(){
+  let box=document.getElementById("cartItems");
+  let total=0;
+  box.innerHTML="";
+  cart.forEach((item,index)=>{
+    total+=item.price*item.qty;
+    box.innerHTML+=`
+    <div style="border-bottom:1px solid #ddd;padding:10px 0">
+      <h4>${item.name}</h4>
+      <p>₹${item.price}</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <button class="qty-btn" onclick="decreaseQty(${index})">-</button>
+        <span>${item.qty}</span>
+        <button class="qty-btn" onclick="increaseQty(${index})">+</button>
+      </div>
+    </div>`;
+  });
+  let totalItems=0;
+  cart.forEach(item=>totalItems+=item.qty);
+  document.getElementById("cartCount").innerText=totalItems;
+  document.getElementById("totalPrice").innerText=total;
+}
+ 
+function increaseQty(i){ cart[i].qty++; updateCart(); }
+function decreaseQty(i){ cart[i].qty--; if(cart[i].qty<=0) cart.splice(i,1); updateCart(); }
+ 
+function toggleCart(){
+  let box=document.getElementById("cartBox");
+  box.style.display=box.style.display==="block"?"none":"block";
+}
+ 
+/* SEARCH USING BOOTSTRAP GRID */
+function searchProduct(value){
+  value=value.toLowerCase();
+  let filtered=productsData.filter(p=>p.name.toLowerCase().includes(value));
+  
+  let html=`
+  <div class="container my-4">
+    <h2 class="title mb-4">SEARCH RESULTS</h2>
+    <div class="row g-4">`;
+    
+  filtered.forEach(p=>{
+    html+=`
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="product-card">
+          <img src="${p.img}">
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <div class="price">₹${p.price}</div>
+            <button class="buy-btn" onclick="addToCart('${p.name}',${p.price})">Add To Cart</button>
+          </div>
+        </div>
+      </div>`;
+  });
+  
+  html+="</div></div>";
+  document.getElementById("content").innerHTML=html;
+}
+ 
+/* =====================
+   PAYMENT MODAL
+   ===================== */
+function openPayment(){
+  if(cart.length===0){ alert("Your cart is empty!"); return; }
+ 
+  let total=0;
+  cart.forEach(item=>total+=item.price*item.qty);
+ 
+  let itemsHtml="";
+  cart.forEach(item=>{
+    itemsHtml+=`<div class="order-row"><span>${item.name} × ${item.qty}</span><span>₹${item.price*item.qty}</span></div>`;
+  });
+  document.getElementById("modalOrderItems").innerHTML=itemsHtml;
+  document.getElementById("modalTotal").innerText=total;
+  document.getElementById("payBtnTotal").innerText=total;
+ 
+  document.getElementById("paymentBody").style.display="block";
+  document.getElementById("paymentSuccess").style.display="none";
+  document.getElementById("paymentOverlay").classList.add("open");
+ 
+  switchMethod('card', document.querySelector('.method-tab'));
+}
+ 
+function closePayment(){
+  document.getElementById("paymentOverlay").classList.remove("open");
+}
+ 
+function switchMethod(method, btn){
+  activeMethod = method;
+  document.querySelectorAll('.method-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cardPanel').classList.toggle('hidden', method!=='card');
+  document.getElementById('upiPanel').classList.toggle('visible', method==='upi');
+  document.getElementById('codPanel').classList.toggle('visible', method==='cod');
+}
+ 
+function formatCard(input){
+  let v=input.value.replace(/\D/g,'').substring(0,16);
+  input.value=v.replace(/(.{4})/g,'$1 ').trim();
+}
+ 
+function formatExpiry(input){
+  let v=input.value.replace(/\D/g,'');
+  if(v.length>=3) v=v.substring(0,2)+' / '+v.substring(2,4);
+  input.value=v;
+}
+ 
+function processPayment(){
+  if(activeMethod==='card'){
+    let name=document.getElementById('cardName').value.trim();
+    let num=document.getElementById('cardNum').value.trim();
+    let exp=document.getElementById('cardExp').value.trim();
+    let cvv=document.getElementById('cardCvv').value.trim();
+    if(!name||!num||!exp||!cvv){ alert("Please fill in all card details."); return; }
+  } else if(activeMethod==='upi'){
+    let upi=document.getElementById('upiId').value.trim();
+    if(!upi||!upi.includes('@')){ alert("Please enter a valid UPI ID."); return; }
+  }
+ 
+  document.getElementById("paymentBody").style.display="none";
+  document.getElementById("paymentSuccess").style.display="block";
+ 
+  cart=[];
+  updateCart();
+}
+ 
+document.getElementById("paymentOverlay").addEventListener("click", function(e){
+  if(e.target===this) closePayment();
+});
+ 
+/* SLIDER */
+let slides=document.querySelectorAll(".slide");
+let idx=0;
+setInterval(()=>{
+  slides[idx].classList.remove("active");
+  idx=(idx+1)%slides.length;
+  slides[idx].classList.add("active");
+},3000);
+ 
+/* DEFAULT ACCESSIBILITIES */
+showPage("home");
+loadProductTable();
+</script>
+</body>
+</html>
