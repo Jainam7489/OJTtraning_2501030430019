@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fashion Ecommerce</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    /* Essential positioning styles for interactive elements that Bootstrap utilities cannot define standalone */
+    #loginPage, #registerPage {
+      display: none; 
+      position: fixed; 
+      top: 0; left: 0; 
+      width: 100%; height: 100%; 
+      background: rgba(0,0,0,0.5); 
+      z-index: 1060;
+    }
+    #cartBox {
+      display: none; 
+      position: fixed; 
+      top: 56px; right: 0; 
+      width: 350px; height: calc(100vh - 56px); 
+      z-index: 1040; 
+      overflow-y: auto;
+    }
+    #paymentOverlay {
+      display: none; 
+      position: fixed; 
+      top: 0; left: 0; 
+      width: 100%; height: 100%; 
+      background: rgba(0,0,0,0.6); 
+      z-index: 1050;
+    }
+    #paymentOverlay.open {
+      display: flex;
+    }
+    .card-panel, .upi-panel {
+      display: none;
+    }
+    .card-panel.visible, .upi-panel.visible {
+      display: block;
+    }
+  </style>
+</head>
+
+<body class="bg-light" style="font-family: 'DM Sans', sans-serif;">
+
+  <!-- TOP BAR -->
+  <div class="bg-dark text-end py-2 px-4">
+    <a href="#" class="text-white text-decoration-none me-3 small" onclick="openLogin()">Login</a>
+    <a href="#" class="text-white text-decoration-none small" onclick="openRegister()">Account</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm py-2">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand d-flex align-items-center" href="#" onclick="showPage('home')">
+        <img class="me-2 rounded" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX0V1wZSrtolF4fh5wVT-iaYMlJii5tcff9A&s" alt="Logo" style="height: 35px; width: 35px; object-fit: cover;">
+        <span class="fw-bold tracking-wide" style="font-family: 'Playfair Display', serif;">FASHION-MART</span>
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <!-- NAVIGATION MENU -->
+        <div class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1">
+          <button class="btn btn-outline-dark border-0 text-start" onclick="showPage('home')">
+            <i class="bi bi-house-door-fill me-1"></i> Home
+          </button>
+          <button class="btn btn-outline-dark border-0 text-start" onclick="showPage('men')">
+            <i class="bi bi-gender-male me-1"></i> Men
+          </button>
+          <button class="btn btn-outline-dark border-0 text-start" onclick="showPage('women')">
+            <i class="bi bi-gender-female me-1"></i> Women
+          </button>
+          <button class="btn btn-outline-dark border-0 text-start" onclick="showPage('kids')">
+            <i class="bi bi-balloon-fill me-1"></i> Kids
+          </button>
+        </div>
+
+        <!-- SEARCH BOX -->
+        <div class="d-flex me-3 my-2 my-lg-0">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input class="form-control border-start-0" type="search" placeholder="Search products..." onkeyup="searchProduct(this.value)">
+          </div>
+        </div>
+
+        <!-- SETTINGS DROPDOWN -->
+        <div class="dropdown me-3 my-2 my-lg-0">
+          <button class="btn btn-light dropdown-toggle border" type="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            ⚙️ Settings
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="settingsDropdown">
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('profile')">My Profile</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('plus')">Fashion mart Zone</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('orders')">Orders</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('wishlist')">Wishlist</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('seller')">Become a Seller</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('rewards')">Rewards</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('gift')">Gift Cards</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('notifications')">Notification Preferences</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('care')">24x7 Customer Care</a></li>
+            <li><a class="dropdown-menu-item dropdown-item" href="#" onclick="handleSetting('advertise')">Advertise</a></li>
+          </ul>
+        </div>
+
+        <!-- CART TOGGLER -->
+        <button class="btn btn-dark position-relative my-2 my-lg-0" onclick="toggleCart()">
+          🛒 Cart <span class="badge bg-danger ms-1 rounded-pill" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CART SIDE BAR BOX -->
+  <div class="bg-white p-4 shadow-lg border-start animate fade-in" id="cartBox">
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+      <h3 class="h5 mb-0 fw-bold">Your Shopping Cart</h3>
+      <button type="button" class="btn-close" onclick="toggleCart()"></button>
+    </div>
+    <div id="cartItems" class="mb-4"></div>
+    <div class="d-flex justify-content-between align-items-center border-top pt-3 mb-4">
+      <h5 class="mb-0 fw-bold">Total Amount:</h5>
+      <h4 class="mb-0 text-success fw-bold">₹<span id="totalPrice">0</span></h4>
+    </div>
+    <button class="btn btn-primary w-100 py-2 fw-bold" onclick="openPayment()">
+      💳 Proceed to Payment
+    </button>
+  </div>
+
+  <!-- LOGIN PAGE OVERLAY MODAL -->
+  <div id="loginPage" class="align-items-center justify-content-center">
+    <div class="bg-white p-4 rounded shadow-lg m-3 border" style="width: 100%; max-width: 400px;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h4 mb-0 fw-bold">Sign In</h3>
+        <button type="button" class="btn-close" onclick="document.getElementById('loginPage').style.display='none'"></button>
+      </div>
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Username</label>
+        <input type="text" class="form-control" id="username" placeholder="Enter Username">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter Password">
+      </div>
+      <button class="btn btn-dark w-100 py-2 mt-2" onclick="login()">Login</button>
+    </div>
+  </div>
+
+  <!-- REGISTRATION PAGE OVERLAY MODAL -->
+  <div id="registerPage" class="align-items-center justify-content-center">
+    <div class="bg-white p-4 rounded shadow-lg m-3 border" style="width: 100%; max-width: 400px;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h4 mb-0 fw-bold">Create Account</h3>
+        <button type="button" class="btn-close" onclick="document.getElementById('registerPage').style.display='none'"></button>
+      </div>
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Username</label>
+        <input type="text" class="form-control" id="regUsername" placeholder="Enter Username">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Email address</label>
+        <input type="email" class="form-control" id="regEmail" placeholder="Enter Email">
+      </div>
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Password</label>
+        <input type="password" class="form-control" id="regPassword" placeholder="Enter Password">
+      </div>
+      <button class="btn btn-dark w-100 py-2 mt-2" onclick="registerUser()">Register</button>
+    </div>
+  </div>
+
+  <!-- HERO IMAGE CAROUSEL SLIDER -->
+  <div id="heroCarousel" class="carousel slide carousel-fade mb-5 shadow-sm" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active" data-bs-interval="3000">
+        <img class="d-block w-100" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1200" alt="Slide 1" style="height: 450px; object-fit: cover;">
+      </div>
+      <div class="carousel-item" data-bs-interval="3000">
+        <img class="d-block w-100" src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1200" alt="Slide 2" style="height: 450px; object-fit: cover;">
+      </div>
+      <div class="carousel-item" data-bs-interval="3000">
+        <img class="d-block w-100" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1200" alt="Slide 3" style="height: 450px; object-fit: cover;">
+      </div>
+    </div>
+  </div>
+
+  <!-- DYNAMIC RENDERED CONTENT (PRODUCTS GRID) -->
+  <div id="content" class="min-vh-50"></div>
+
+  <!-- DATA PRODUCT TABLE SECTION -->
+  <div class="container my-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h2 class="h4 mb-0 fw-bold text-secondary text-uppercase tracking-wider" style="font-family: 'Playfair Display', serif;">Products Catalog Index</h2>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="ps-4">Preview</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Price</th>
+                <th scope="col" class="text-end pe-4">Action</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody">
+              <!-- Dynamically injection loop inside JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPREHENSIVE PAYMENT MODAL OVERLAY CONTAINER -->
+  <div class="payment-overlay align-items-center justify-content-center" id="paymentOverlay">
+    <div class="bg-white rounded shadow-lg m-3 border overflow-hidden d-flex flex-column" style="width: 100%; max-width: 600px; max-height: 90vh;">
+      
+      <!-- Payment Header -->
+      <div class="d-flex justify-content-between align-items-center bg-light border-bottom p-3">
+        <h3 class="h5 mb-0 fw-bold">💳 Secure Gateway Checkout</h3>
+        <button class="btn-close" onclick="closePayment()"></button>
+      </div>
+
+      <!-- Payment Body Container -->
+      <div class="p-4 overflow-y-auto flex-grow-1" id="paymentBody">
+        
+        <!-- Order Summary Cards Box -->
+        <div class="card mb-4 bg-light border-0">
+          <div class="card-body">
+            <h4 class="h6 text-uppercase fw-bold text-muted mb-3">Order Summary Review</h4>
+            <div id="modalOrderItems" class="small mb-2"></div>
+            <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+              <span class="fw-bold">Total Grand Payable:</span>
+              <span class="fw-bold text-success fs-5">₹<span id="modalTotal">0</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Selection Nav Tabs Components -->
+        <ul class="nav nav-pills nav-fill mb-4 border p-1 rounded bg-light">
+          <li class="nav-item">
+            <button class="nav-link active py-2 small fw-bold d-flex align-items-center justify-content-center gap-1" id="tab-card" onclick="switchMethod('card', this)">
+              <span>💳</span> Card Layout
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link py-2 small fw-bold d-flex align-items-center justify-content-center gap-1" id="tab-upi" onclick="switchMethod('upi', this)">
+              <span>📱</span> UPI Net
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link py-2 small fw-bold d-flex align-items-center justify-content-center gap-1" id="tab-cod" onclick="switchMethod('cod', this)">
+              <span>🏠</span> C.O.D
+            </button>
+          </li>
+        </ul>
+
+        <!-- Card Configuration Panels Box -->
+        <div class="card-panel visible" id="cardPanel">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Cardholder Full Name</label>
+            <input type="text" class="form-control" id="cardName" placeholder="Name on credit/debit card">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Card Number Structure</label>
+            <input type="text" class="form-control" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label small fw-semibold">Expiry Date</label>
+              <input type="text" class="form-control" id="cardExp" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label small fw-semibold">Security CVV</label>
+              <input type="password" class="form-control" id="cardCvv" placeholder="•••" maxlength="3">
+            </div>
+          </div>
+        </div>
+
+        <!-- UPI Panel Area Box -->
+        <div class="upi-panel" id="upiPanel">
+          <div class="mb-4">
+            <label class="form-label small fw-semibold">Virtual Payment Address ID</label>
+            <input type="text" class="form-control" id="upiId" placeholder="ex: username@upi">
+            <div class="form-text mt-1 text-muted small">Verification code routing will process securely inside secondary application frames.</div>
+          </div>
+        </div>
+
+        <!-- COD Confirmation Box Layout -->
+        <div class="upi-panel text-center py-3 border rounded mb-4 bg-light-subtle" id="codPanel">
+          <p class="mb-0 text-muted fs-6 px-3">
+            🏠 Pay total transaction directly with liquid currency notes matching exact orders when package arrives at destination doorstep.<br>
+            <span class="badge bg-success mt-2">Zero Pre-payment required</span>
+          </p>
+        </div>
+
+        <!-- Master Proceed Processing Verification Button -->
+        <button class="btn btn-success w-100 py-3 fw-bold fs-5 shadow-sm mt-2" onclick="processPayment()">
+          🔒 Authorize Secure Payment of ₹<span id="payBtnTotal">0</span>
+        </button>
+
+        <div class="text-center text-muted small mt-3">
+          🛡️ Standard 256-bit Secure Sockets Layer Encryption active across pipelines.
+        </div>
+      </div>
+
+      <!-- Payment Success Message Block -->
+      <div class="p-5 text-center flex-grow-1" id="paymentSuccess" style="display:none;">
+        <div class="bg-success text-white d-inline-flex align-items-center justify-content-center rounded-circle mb-4 shadow" style="width: 80px; height: 80px;">
+          <i class="bi bi-check-lg fs-1"></i>
+        </div>
+        <h2 class="fw-bold h3 mb-2 text-dark">Payment Dispatched Successfully!</h2>
+        <p class="text-secondary mb-4 mx-auto" style="max-width: 340px;">Your purchase authorization is processed. Digital invoice details will dispatch to registered parameters shortly.</p>
+        <button class="btn btn-outline-dark px-4 py-2 fw-semibold" onclick="closePayment()">Continue Shopping</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER COMPREHENSIVE COMPONENT SECTION -->
+  <footer class="bg-dark text-white border-top pt-5 pb-3 mt-5">
+    <div class="container text-secondary">
+      <div class="row g-4 text-start">
+        
+        <!-- Column 1: About Corporate Parameters -->
+        <div class="col-12 col-md-3">
+          <h5 class="text-white fw-bold mb-3 small text-uppercase tracking-wider">About Us</h5>
+          <p class="small text-muted lh-base mb-3">
+            FASHION is a premium curated e-commerce marketplace delivering the latest design trends right to your wardrobe doorstep. We specialize in luxury quality styles across premium global aesthetics.
+          </p>
+          <div class="d-flex gap-3 fs-5 mt-2">
+            <a href="#" class="text-secondary text-white-hover"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-secondary text-white-hover"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="text-secondary text-white-hover"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="text-secondary text-white-hover"><i class="bi bi-pinterest"></i></a>
+          </div>
+        </div>
+
+        <!-- Column 2: Quick Context Category Collection Connections Links -->
+        <div class="col-6 col-md-2">
+          <h5 class="text-white fw-bold mb-3 small text-uppercase tracking-wider">Collections</h5>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover" onclick="showPage('home'); return false;">New Arrivals</a></li>
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover" onclick="showPage('men'); return false;">Men's Lounge</a></li>
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover" onclick="showPage('women'); return false;">Women's Wardrobe</a></li>
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover" onclick="showPage('kids'); return false;">Kids &amp; Toys</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Policy Legal Framework Compliance Links -->
+        <div class="col-6 col-md-3">
+          <h5 class="text-white fw-bold mb-3 small text-uppercase tracking-wider">Terms &amp; Policies</h5>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover">Terms &amp; Conditions</a></li>
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover">Privacy Policy</a></li>
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover">Return &amp; Exchange Policy</a></li>
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover" onclick="handleSetting('care'); return false;">24x7 Customer Desk</a></li>
+            <li><a href="#" class="text-decoration-none text-secondary text-white-hover">Shipping FAQ</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Customer Contact Support Matrix Mapping Coordinates Box -->
+        <div class="col-12 col-md-4">
+          <h5 class="text-white fw-bold mb-3 small text-uppercase tracking-wider">Contact Us</h5>
+          <div class="d-flex align-items-start gap-2 small text-muted mb-2">
+            <i class="bi bi-geo-alt-fill text-secondary flex-shrink-0 mt-1"></i>
+            <span>102, Trend Avenue, Fashion District, Suite 400, Mumbai, India</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 small text-muted mb-2">
+            <i class="bi bi-telephone-fill text-secondary"></i>
+            <span>1800-FASHION-CARE (1800-327-4466)</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 small text-muted mb-3">
+            <i class="bi bi-envelope-fill text-secondary"></i>
+            <span>support@fashioncommerce.local</span>
+          </div>
+          
+          <!-- Live iframe Map Frame Container Embedding Box Layout UI element -->
+          <div class="rounded overflow-hidden border border-secondary shadow-sm">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.7984737974345!2d72.83363417610332!3d18.96240038221804!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7d1c16b1fffff%3A0xbc4e8e84772b2606!2sFashion%20Street!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin" 
+              width="100%" 
+              height="110" 
+              style="border:0; display: block;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+        </div>
+
+      </div>
+
+      <hr class="border-secondary my-4">
+
+      <!-- Bottom Line Copyright Bar Element Framework Configuration UI container -->
+      <div class="d-md-flex justify-content-between align-items-center small text-muted text-center text-md-start">
+        <p class="mb-2 mb-md-0">&copy; 2026 FASHION Commerce Inc. All rights reserved.</p>
+        <p class="mb-0 text-muted" style="font-size: 11px;">Secured checkout ecosystem configured standard 256-bit algorithmic encryption pipelines.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  let cart = [];
+  let activeMethod = 'card';
+  let currentUser = null; 
+   
+  /* PRODUCTS INTERNAL INVENTORY ENGINE DATA */
+  const productsData = [
+    { name:"Men T-Shirt",       category:"men",   price:500,  img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=500" },
+    { name:"Men Shoes",         category:"men",   price:3000, img:"https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=500" },
+    { name:"Men Watch",         category:"men",   price:5000, img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500" },
+    { name:"Men Goggles",       category:"men",   price:2700, img:"https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=500" },
+    { name:"Women Dress",       category:"women", price:1200, img:"https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=500" },
+    { name:"Women's makeup kit",category:"women", price:7000, img:"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=500" },
+    { name:"Women Bag",         category:"women", price:2000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=500" },
+    { name:"Women Shoe",        category:"women", price:4000, img:"https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=500" },
+    { name:"Kids Wear",         category:"kids",  price:500,  img:"https://images.unsplash.com/photo-1519457431-44ccd64a579b?q=80&w=500" },
+    { name:"Kids shoe",         category:"kids",  price:2000, img:"https://xcdn.next.co.uk/common/items/default/default/itemimages/3_4Ratio/product/lge/K93889s.jpg?im=Resize,width=1000" }
+  ];
+   
+  /* LOGIN ACTION ROUTING TRIGGER FUNCTIONS */
+  function openLogin(){ 
+    document.getElementById("registerPage").style.display="none";
+    document.getElementById("loginPage").style.display="flex"; 
+  }
+  function login(){
+    let u=document.getElementById("username").value.trim();
+    let p=document.getElementById("password").value.trim();
+    if(u && p){ 
+      currentUser = u;
+      alert("Login Successful! Welcome to fashion, " + currentUser); 
+      document.getElementById("loginPage").style.display="none"; 
+    }
+    else alert("Please Enter Username & Password");
+  }
+   
+  /* REGISTRATION SYSTEM CONTROLLER FORMS FUNCTIONS */
+  function openRegister(){ 
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("registerPage").style.display="flex"; 
+  }
+  function registerUser(){
+    let u=document.getElementById("regUsername").value.trim();
+    let e=document.getElementById("regEmail").value.trim();
+    let p=document.getElementById("regPassword").value.trim();
+    if(u&&e&&p){ 
+      alert("Registration Successful"); 
+      document.getElementById("registerPage").style.display="none"; 
+    }
+    else alert("Please Fill All Fields");
+  }
+
+  /* SETTINGS ACCOUNT PANEL CONFIGURATION SELECTION PARSER ACTION LOGIC HANDLING ENGINE */
+  function handleSetting(action) {
+    if(['profile', 'plus', 'orders', 'wishlist', 'notifications'].includes(action)) {
+      if(!currentUser) {
+        alert("Please login first to view your panel configuration.");
+        openLogin();
+        return;
+      }
+    }
+
+    switch(action) {
+      case 'profile':
+        document.getElementById("content").innerHTML = `
+          <div class="container my-5">
+            <div class="card p-4 mx-auto shadow-sm" style="max-width:500px;">
+              <h2 class="h4 mb-3 fw-bold text-center border-bottom pb-2" style="font-family:'Playfair Display', serif">My Account Profile</h2>
+              <p class="text-center mb-1 fs-5"><strong>Username:</strong> ${currentUser}</p>
+              <p class="text-center text-success mb-0 small"><i class="bi bi-patch-check-fill"></i> Status: Verified Premium Fashion Member</p>
+            </div>
+          </div>`;
+        break;
+      case 'plus':
+        alert("Welcome to Flipkart Plus Zone! You have 50 SuperCoins available.");
+        break;
+      case 'orders':
+        document.getElementById("content").innerHTML = `
+          <div class="container my-5">
+            <div class="card p-4 mx-auto text-center shadow-sm" style="max-width:600px;">
+              <h2 class="h4 mb-3 fw-bold border-bottom pb-2" style="font-family:'Playfair Display', serif">Your Active Orders</h2>
+              <div class="py-4">
+                <i class="bi bi-box-seam text-muted fs-1 mb-2 d-block"></i>
+                <p class="text-muted mb-0">No recent shipments tracking. Your dashboard is clear!</p>
+              </div>
+            </div>
+          </div>`;
+        break;
+      case 'wishlist':
+        alert("Your Wishlist has 0 items. Start exploring our premium collections to add products!");
+        break;
+      case 'seller':
+        let sellConfirm = confirm("Do you want to switch to the Merchant Onboarding portal and sell products?");
+        if(sellConfirm) alert("Redirecting to Fashion Seller Registry...");
+        break;
+      case 'rewards':
+        alert("Congratulations! You unlocked a flat 10% coupon code: FASHION10");
+        break;
+      case 'gift':
+        let voucher = prompt("Enter your 16-digit Gift Card number to redeem balances:");
+        if(voucher) alert("Voucher card authenticated securely!");
+        break;
+      case 'notifications':
+        alert("Preferences saved: Promotion updates via email are enabled.");
+        break;
+      case 'care':
+        alert("Dialing Customer Support: 1800-FASHION-CARE (Available 24x7)");
+        break;
+      case 'advertise':
+        alert("To place ad banners here, please drop an inquiry at ads_fashioncommerce@gmail.com");
+        break;
+    }
+  }
+   
+  /* SHOW SECTION PAGES GENERATOR DOM STRUCTURING GRID EXECUTION LAYER SYSTEM */
+  function showPage(page){
+    let filtered = page==="home" ? productsData : productsData.filter(p=>p.category===page);
+    
+    let html=`
+    <div class="container my-5">
+      <h2 class="h3 fw-bold mb-4 border-bottom pb-3 text-uppercase tracking-wider" style="font-family: 'Playfair Display', serif;">${page} Collection</h2>
+      <div class="row g-4">`;
+      
+    filtered.forEach(p=>{
+      html+=`
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="card h-100 shadow-sm border border-light-subtle rounded overflow-hidden product-card-hover">
+            <div style="height: 280px; overflow: hidden; background:#f8f9fa;">
+              <img src="${p.img}" class="w-100 h-100" style="object-fit: cover;">
+            </div>
+            <div class="card-body d-flex flex-column justify-content-between p-3">
+              <div>
+                <h3 class="h6 fw-bold mb-1 text-truncate text-dark">${p.name}</h3>
+                <div class="text-success fw-bold fs-5 mb-3">₹${p.price}</div>
+              </div>
+              <button class="btn btn-dark w-100 py-2 btn-sm fw-medium" onclick="addToCart('${p.name}',${p.price})">
+                <i class="bi bi-cart-plus me-1"></i> Add To Cart
+              </button>
+            </div>
+          </div>
+        </div>`;
+    });
+    
+    html+="</div></div>";
+    document.getElementById("content").innerHTML=html;
+    document.getElementById("content").scrollIntoView({ behavior: 'smooth' });
+  }
+   
+  /* CONSTRUCT MASTER REPOSITORY LISTING TABLE INJECTIONS ENGINE */
+  function loadProductTable(){
+    let html="";
+    productsData.forEach(p=>{
+      html+=`
+      <tr>
+        <td class="ps-4">
+          <img src="${p.img}" class="rounded border border-secondary-subtle" style="width:50px; height:50px; object-fit:cover;">
+        </td>
+        <td class="fw-semibold text-dark">${p.name}</td>
+        <td><span class="badge bg-light text-dark border text-uppercase">${p.category}</span></td>
+        <td class="fw-bold text-success">₹${p.price}</td>
+        <td class="text-end pe-4">
+          <button class="btn btn-sm btn-outline-dark px-3" onclick="addToCart('${p.name}',${p.price})">
+            <i class="bi bi-plus-lg me-1"></i> Cart
+          </button>
+        </td>
+      </tr>`;
+    });
+    document.getElementById("productTableBody").innerHTML=html;
+  }
+   
+  /* CART ARRAY CONTROLLER OPERATIONS ENGINE FUNCTIONS STRUCTURE */
+  function addToCart(name,price){
+    let found=cart.find(item=>item.name===name);
+    if(found) found.qty++;
+    else cart.push({name,price,qty:1});
+    updateCart();
+  }
+   
+  /* UPDATE DISPLAY QUANTITY COUNTERS TOTAL AMORTIZATION ALGORITHMIC CALCULATIONS VIEW RE-RENDERS */
+  function updateCart(){
+    let box=document.getElementById("cartItems");
+    let total=0;
+    box.innerHTML="";
+    
+    cart.forEach((item,index)=>{
+      total+=item.price*item.qty;
+      box.innerHTML+=`
+      <div class="card border p-2 mb-2 bg-light-subtle">
+        <div class="d-flex justify-content-between align-items-start mb-1">
+          <h4 class="h6 mb-0 fw-bold text-truncate pe-2" style="max-width:180px;">${item.name}</h4>
+          <span class="text-success fw-bold small">₹${item.price*item.qty}</span>
+        </div>
+        <div class="d-flex align-items-center justify-content-between mt-2">
+          <span class="text-muted small">Unit: ₹${item.price}</span>
+          <div class="input-group input-group-sm" style="width: 90px;">
+            <button class="btn btn-outline-secondary py-0" type="button" onclick="decreaseQty(${index})">-</button>
+            <span class="form-control text-center py-0 small bg-white border-secondary-subtle select-none">${item.qty}</span>
+            <button class="btn btn-outline-secondary py-0" type="button" onclick="increaseQty(${index})">+</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    
+    let totalItems=0;
+    cart.forEach(item=>totalItems+=item.qty);
+    document.getElementById("cartCount").innerText=totalItems;
+    document.getElementById("totalPrice").innerText=total;
+  }
+   
+  function increaseQty(i){ cart[i].qty++; updateCart(); }
+  function decreaseQty(i){ cart[i].qty--; if(cart[i].qty<=0) cart.splice(i,1); updateCart(); }
+   
+  function toggleCart(){
+    let box=document.getElementById("cartBox");
+    box.style.display=box.style.display==="block"?"none":"block";
+  }
+   
+  /* SEARCH INPUT FILTER ENGINE DYNAMIC ROW GRID INTERNALS LOGIC INJECTIONS */
+  function searchProduct(value){
+    value=value.toLowerCase().trim();
+    let filtered=productsData.filter(p=>p.name.toLowerCase().includes(value));
+    
+    let html=`
+    <div class="container my-5">
+      <h2 class="h3 fw-bold mb-4 border-bottom pb-3 text-uppercase tracking-wider text-secondary" style="font-family: 'Playfair Display', serif;"><i class="bi bi-search me-2"></i> Search Results Engine</h2>
+      <div class="row g-4">`;
+      
+    if(filtered.length === 0){
+      html += `<div class="col-12 text-center py-5 text-muted"><i class="bi bi-exclamation-circle fs-2 d-block mb-2"></i> No matching products found matching criteria.</div>`;
+    } else {
+      filtered.forEach(p=>{
+        html+=`
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card h-100 shadow-sm border border-light-subtle rounded overflow-hidden">
+              <div style="height: 280px; overflow: hidden; background:#f8f9fa;">
+                <img src="${p.img}" class="w-100 h-100" style="object-fit: cover;">
+              </div>
+              <div class="card-body d-flex flex-column justify-content-between p-3">
+                <div>
+                  <h3 class="h6 fw-bold mb-1 text-truncate text-dark">${p.name}</h3>
+                  <div class="text-success fw-bold fs-5 mb-3">₹${p.price}</div>
+                </div>
+                <button class="btn btn-dark w-100 py-2 btn-sm fw-medium" onclick="addToCart('${p.name}',${p.price})">
+                  <i class="bi bi-cart-plus me-1"></i> Add To Cart
+                </button>
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+    
+    html+="</div></div>";
+    document.getElementById("content").innerHTML=html;
+  }
+   
+  /* SECURE GATEWAY CHECKOUT MODALS SELECTION CONTROL LAYERS ROUTINES ENGINE */
+  function openPayment(){
+    if(cart.length===0){ alert("Your cart is empty!"); return; }
+   
+    let total=0;
+    cart.forEach(item=>total+=item.price*item.qty);
+   
+    let itemsHtml="";
+    cart.forEach(item=>{
+      itemsHtml+=`
+      <div class="d-flex justify-content-between align-items-center mb-1 py-1 border-bottom border-light">
+        <span class="text-secondary">${item.name} <strong class="text-dark">× ${item.qty}</strong></span>
+        <span class="fw-semibold text-dark">₹${item.price*item.qty}</span>
+      </div>`;
+    });
+    document.getElementById("modalOrderItems").innerHTML=itemsHtml;
+    document.getElementById("modalTotal").innerText=total;
+    document.getElementById("payBtnTotal").innerText=total;
+   
+    document.getElementById("paymentBody").style.display="block";
+    document.getElementById("paymentSuccess").style.display="none";
+    document.getElementById("paymentOverlay").classList.add("open");
+   
+    switchMethod('card', document.getElementById('tab-card'));
+  }
+   
+  function closePayment(){
+    document.getElementById("paymentOverlay").classList.remove("open");
+  }
+   
+  function switchMethod(method, btn){
+    activeMethod = method;
+    document.querySelectorAll('.nav-pills .nav-link').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    
+    document.getElementById('cardPanel').classList.toggle('visible', method==='card');
+    document.getElementById('upiPanel').classList.toggle('visible', method==='upi');
+    document.getElementById('codPanel').classList.toggle('visible', method==='cod');
+  }
+   
+  function formatCard(input){
+    let v=input.value.replace(/\D/g,'').substring(0,16);
+    input.value=v.replace(/(.{4})/g,'$1 ').trim();
+  }
+   
+  function formatExpiry(input){
+    let v=input.value.replace(/\D/g,'');
+    if(v.length>=3) v=v.substring(0,2)+' / '+v.substring(2,4);
+    input.value=v;
+  }
+   
+  function processPayment(){
+    if(activeMethod==='card'){
+      let name=document.getElementById('cardName').value.trim();
+      let num=document.getElementById('cardNum').value.trim();
+      let exp=document.getElementById('cardExp').value.trim();
+      let cvv=document.getElementById('cardCvv').value.trim();
+      if(!name||!num||!exp||!cvv){ alert("Please fill in all card details."); return; }
+    } else if(activeMethod==='upi'){
+      let upi=document.getElementById('upiId').value.trim();
+      if(!upi||!upi.includes('@')){ alert("Please enter a valid UPI ID."); return; }
+    }
+   
+    document.getElementById("paymentBody").style.display="none";
+    document.getElementById("paymentSuccess").style.display="block";
+   
+    cart=[];
+    updateCart();
+  }
+   
+  document.getElementById("paymentOverlay").addEventListener("click", function(e){
+    if(e.target===this) closePayment();
+  });
+   
+  /* DEFAULT ENGINE LOADER ROUTINES ACCESSIBILITIES CALLING ON INSTANTIATION */
+  showPage("home");
+  loadProductTable();
+  </script>
+</body>
+</html>
