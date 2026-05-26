@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tapri — Street Food & Chai</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Kalam:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          saffron: { DEFAULT: '#FF6B1A', light: '#FFF0E8', dark: '#CC4E0A' },
+          chai:    { DEFAULT: '#8B5E3C', light: '#F5EDE4' },
+          tapri:   { cream: '#FFF8F0', dark: '#1C1007', text: '#3D2008', muted: '#7A5432' },
+          tgreen:  { DEFAULT: '#2D7A4F', light: '#E6F5EE' },
+        },
+        fontFamily: {
+          baloo:  ['"Baloo 2"', 'cursive'],
+          kalam:  ['Kalam', 'cursive'],
+          nunito: ['Nunito', 'sans-serif'],
+        },
+        keyframes: {
+          fadeUp:   { from: { opacity:'0', transform:'translateY(24px)' }, to: { opacity:'1', transform:'translateY(0)' } },
+          marquee:  { from: { transform:'translateX(0)' }, to: { transform:'translateX(-50%)' } },
+          floatUD:  {
+            '0%,100%': { transform:'translateY(-50%) rotate(-3deg)' },
+            '50%':     { transform:'translateY(calc(-50% - 12px)) rotate(2deg)' }
+          },
+          slideDown:{ from:{ opacity:'0', transform:'translateY(-8px)' }, to:{ opacity:'1', transform:'translateY(0)' } },
+        },
+        animation: {
+          'fade-up':    'fadeUp 0.6s ease both',
+          'fade-up-1':  'fadeUp 0.7s 0.1s ease both',
+          'fade-up-2':  'fadeUp 0.7s 0.2s ease both',
+          'fade-up-3':  'fadeUp 0.7s 0.3s ease both',
+          'marquee':    'marquee 20s linear infinite',
+          'float':      'floatUD 5s ease-in-out infinite',
+          'slide-down': 'slideDown 0.25s ease both',
+        },
+        borderRadius: { '4xl':'2rem', '5xl':'2.5rem' },
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Nunito', sans-serif; }
+  body::before {
+    content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  .hero-visual { animation: floatUD 5s ease-in-out infinite; }
+  @keyframes floatUD {
+    0%,100% { transform:translateY(-50%) rotate(-3deg); }
+    50%      { transform:translateY(calc(-50% - 12px)) rotate(2deg); }
+  }
+  /* Mobile menu open */
+  #mobileMenu.open { display:block; animation: slideDown 0.25s ease both; }
+  @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body class="bg-tapri-cream text-tapri-text overflow-x-hidden">
+
+<!-- ═══════════════════════════════════════
+     NAVIGATION
+═══════════════════════════════════════ -->
+<nav class="sticky top-0 z-50 bg-tapri-cream/90 backdrop-blur-md border-b border-chai/20 h-[68px] flex items-center justify-between px-[5%]">
+
+  <!-- Logo -->
+  <a href="#" class="font-baloo text-[2rem] font-extrabold text-saffron leading-none tracking-tight no-underline">
+    Tapri
+    <span class="block font-kalam text-base font-semibold text-chai leading-none -mt-1">chai &amp; bites</span>
+  </a>
+
+  <!-- Desktop nav links -->
+  <ul class="hidden md:flex items-center gap-8 list-none">
+    <li><a href="#menu"    class="font-bold text-[0.95rem] text-tapri-muted hover:text-saffron transition-colors no-underline tracking-[0.3px]">Menu</a></li>
+    <li><a href="#about"   class="font-bold text-[0.95rem] text-tapri-muted hover:text-saffron transition-colors no-underline tracking-[0.3px]">About</a></li>
+    <li><a href="#reviews" class="font-bold text-[0.95rem] text-tapri-muted hover:text-saffron transition-colors no-underline tracking-[0.3px]">Reviews</a></li>
+    <li><a href="#contact" class="font-bold text-[0.95rem] text-tapri-muted hover:text-saffron transition-colors no-underline tracking-[0.3px]">Contact</a></li>
+  </ul>
+
+  <!-- Right side: Order btn + Hamburger -->
+  <div class="flex items-center gap-3">
+    <button onclick="scrollToMenu()"
+      class="bg-saffron hover:bg-saffron-dark text-white border-none px-5 py-2 rounded-full font-nunito font-extrabold text-[0.9rem] cursor-pointer transition-all hover:scale-105 tracking-[0.3px]">
+      Order Now
+    </button>
+
+    <!-- Hamburger (mobile only) -->
+    <button id="hamburger" onclick="toggleMobileMenu()"
+      class="md:hidden flex flex-col justify-center items-center w-9 h-9 gap-[5px] bg-saffron-light rounded-xl border border-saffron/20 cursor-pointer"
+      aria-label="Toggle navigation">
+      <span id="hb1" class="block w-5 h-[2px] bg-saffron-dark rounded transition-all duration-300 origin-center"></span>
+      <span id="hb2" class="block w-5 h-[2px] bg-saffron-dark rounded transition-all duration-300"></span>
+      <span id="hb3" class="block w-5 h-[2px] bg-saffron-dark rounded transition-all duration-300 origin-center"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Dropdown Menu -->
+<div id="mobileMenu"
+  class="hidden fixed top-[68px] left-0 right-0 z-40 bg-tapri-cream/98 backdrop-blur-md border-b border-chai/20 shadow-lg px-[5%] py-4">
+  <ul class="flex flex-col gap-1 list-none">
+    <li><a href="#menu"    onclick="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-tapri-muted hover:bg-saffron-light hover:text-saffron transition-all no-underline">
+      <span class="text-lg">🍽️</span> Menu
+    </a></li>
+    <li><a href="#about"   onclick="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-tapri-muted hover:bg-saffron-light hover:text-saffron transition-all no-underline">
+      <span class="text-lg">📖</span> About
+    </a></li>
+    <li><a href="#reviews" onclick="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-tapri-muted hover:bg-saffron-light hover:text-saffron transition-all no-underline">
+      <span class="text-lg">⭐</span> Reviews
+    </a></li>
+    <li><a href="#contact" onclick="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-tapri-muted hover:bg-saffron-light hover:text-saffron transition-all no-underline">
+      <span class="text-lg">📞</span> Contact
+    </a></li>
+    <li class="pt-2 border-t border-chai/15 mt-1">
+      <button onclick="scrollToMenu(); closeMobileMenu()"
+        class="w-full bg-saffron hover:bg-saffron-dark text-white font-extrabold py-3 rounded-full transition-colors text-[0.95rem]">
+        🛒 Order Now
+      </button>
+    </li>
+  </ul>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section class="relative min-h-[90vh] flex items-center px-[5%] py-16 overflow-hidden">
+
+  <!-- Bg radial blobs -->
+  <div class="absolute inset-0"
+    style="background:
+      radial-gradient(ellipse 60% 60% at 80% 50%, rgba(255,107,26,0.13) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 20% 80%, rgba(139,94,60,0.10) 0%, transparent 70%)">
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-[600px]">
+    <div class="inline-block bg-saffron-light border border-saffron/30 text-saffron-dark text-[0.82rem] font-extrabold px-4 py-1 rounded-full tracking-[1.2px] uppercase mb-5 animate-fade-up">
+      🫖 Fresh Every Day
+    </div>
+    <h1 class="font-baloo text-[clamp(2.8rem,6vw,5rem)] font-extrabold leading-[1.05] text-tapri-dark mb-5 animate-fade-up-1">
+      Desi flavours,
+      <em class="not-italic text-saffron block">straight to you.</em>
+    </h1>
+    <p class="text-[1.15rem] text-tapri-muted leading-[1.7] max-w-[480px] mb-8 animate-fade-up-2">
+      From the first sip of masala chai to the last bite of vada pav — Tapri brings the heart of Indian street food right to your plate.
+    </p>
+    <div class="flex flex-wrap gap-4 animate-fade-up-3">
+      <a href="#menu"
+        class="bg-saffron hover:bg-saffron-dark text-white font-nunito font-extrabold text-base px-8 py-[0.85rem] rounded-full transition-all hover:-translate-y-0.5 no-underline inline-block">
+        Explore Menu
+      </a>
+      <a href="#about"
+        class="bg-transparent text-chai border-2 border-chai hover:bg-chai-light font-nunito font-extrabold text-base px-8 py-[0.85rem] rounded-full transition-all hover:-translate-y-0.5 no-underline inline-block">
+        Our Story
+      </a>
+    </div>
+  </div>
+
+  <!-- SVG Hero Illustration -->
+  <svg class="hero-visual absolute right-[4%] top-1/2 pointer-events-none w-[clamp(280px,42vw,520px)] hidden lg:block"
+    viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <circle cx="200" cy="200" r="190" fill="#FFF0E8" stroke="#FF6B1A" stroke-width="2" stroke-dasharray="12 8"/>
+    <rect x="80" y="230" width="240" height="120" rx="16" fill="#8B5E3C" opacity="0.85"/>
+    <rect x="90" y="240" width="220" height="100" rx="12" fill="#A0714A"/>
+    <ellipse cx="200" cy="210" rx="52" ry="20" fill="#FF6B1A"/>
+    <path d="M150 210 Q148 265 200 270 Q252 265 250 210 Z" fill="#FF6B1A"/>
+    <path d="M155 210 Q153 260 200 264 Q247 260 245 210 Z" fill="#FFF0E8"/>
+    <path d="M160 225 Q200 240 240 225 L245 248 Q200 262 155 248 Z" fill="#C26E3A" opacity="0.7"/>
+    <path d="M185 195 Q178 178 185 162 Q192 146 185 130" stroke="#FF9A60" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <path d="M200 192 Q193 175 200 159 Q207 143 200 127" stroke="#FF9A60" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <path d="M215 195 Q222 178 215 162 Q208 146 215 130" stroke="#FF9A60" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+    <path d="M250 215 Q275 215 275 235 Q275 255 250 255" stroke="#CC4E0A" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <ellipse cx="200" cy="272" rx="65" ry="12" fill="#CC4E0A" opacity="0.4"/>
+    <ellipse cx="140" cy="280" rx="36" ry="18" fill="#E8A050"/>
+    <ellipse cx="140" cy="273" rx="34" ry="14" fill="#F5C06A"/>
+    <ellipse cx="140" cy="279" rx="24" ry="10" fill="#5C8A3C"/>
+    <polygon points="280,250 310,300 250,300" fill="#E0923A"/>
+    <polygon points="282,255 308,296 255,296" fill="#F0A84E"/>
+    <circle cx="95" cy="160" r="6" fill="#FF6B1A" opacity="0.3"/>
+    <circle cx="310" cy="140" r="8" fill="#FF6B1A" opacity="0.2"/>
+    <circle cx="60" cy="280" r="5" fill="#8B5E3C" opacity="0.25"/>
+    <circle cx="345" cy="300" r="7" fill="#8B5E3C" opacity="0.2"/>
+    <ellipse cx="170" cy="265" rx="10" ry="5" fill="#4CAF50" transform="rotate(-30 170 265)" opacity="0.7"/>
+  </svg>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     MARQUEE
+═══════════════════════════════════════ -->
+<div class="bg-saffron py-3 overflow-hidden whitespace-nowrap">
+  <div class="inline-block animate-marquee">
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">☕ Masala Chai</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🥙 Vada Pav</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🥔 Samosa</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🫓 Pav Bhaji</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🍜 Maggi Special</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🧆 Dabeli</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🥗 Bhel Puri</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🫖 Cutting Chai</span><span class="text-white/50 mx-2">✦</span>
+    <!-- repeat for seamless loop -->
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">☕ Masala Chai</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🥙 Vada Pav</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🥔 Samosa</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🫓 Pav Bhaji</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🍜 Maggi Special</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🧆 Dabeli</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🥗 Bhel Puri</span><span class="text-white/50 mx-2">✦</span>
+    <span class="font-baloo font-bold text-base text-white tracking-[0.5px] mx-10">🫖 Cutting Chai</span><span class="text-white/50 mx-2">✦</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     MENU
+═══════════════════════════════════════ -->
+<section id="menu" class="relative z-10 bg-white px-[5%] py-20">
+
+  <!-- Header -->
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+    <div>
+      <div class="text-[0.78rem] font-extrabold tracking-[2px] uppercase text-saffron mb-1">What We Serve</div>
+      <h2 class="font-baloo text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold text-tapri-dark leading-[1.1]">The Tapri Menu</h2>
+    </div>
+    <p class="text-base text-tapri-muted max-w-[480px] leading-relaxed">Freshly made street eats and chai — just like your nani used to order.</p>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="flex flex-wrap gap-2 mb-10">
+    <button class="tab-btn active px-5 py-2 rounded-full border-[1.5px] border-chai/20 font-nunito font-bold text-[0.9rem] text-tapri-muted cursor-pointer transition-all hover:border-saffron hover:text-saffron"
+      onclick="filterMenu('all', this)">All Items</button>
+    <button class="tab-btn px-5 py-2 rounded-full border-[1.5px] border-chai/20 font-nunito font-bold text-[0.9rem] text-tapri-muted cursor-pointer transition-all hover:border-saffron hover:text-saffron"
+      onclick="filterMenu('chai', this)">☕ Chai</button>
+    <button class="tab-btn px-5 py-2 rounded-full border-[1.5px] border-chai/20 font-nunito font-bold text-[0.9rem] text-tapri-muted cursor-pointer transition-all hover:border-saffron hover:text-saffron"
+      onclick="filterMenu('snacks', this)">🥙 Snacks</button>
+    <button class="tab-btn px-5 py-2 rounded-full border-[1.5px] border-chai/20 font-nunito font-bold text-[0.9rem] text-tapri-muted cursor-pointer transition-all hover:border-saffron hover:text-saffron"
+      onclick="filterMenu('meals', this)">🫓 Meals</button>
+    <button class="tab-btn px-5 py-2 rounded-full border-[1.5px] border-chai/20 font-nunito font-bold text-[0.9rem] text-tapri-muted cursor-pointer transition-all hover:border-saffron hover:text-saffron"
+      onclick="filterMenu('sweet', this)">🍮 Sweet</button>
+  </div>
+
+  <!-- Grid -->
+  <div id="menuGrid" class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6"></div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     ABOUT
+═══════════════════════════════════════ -->
+<section id="about" class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center px-[5%] py-20">
+
+  <!-- Image block -->
+  <div class="relative max-w-[360px] md:max-w-none mx-auto md:mx-0">
+    <div class="w-full aspect-square bg-saffron-light rounded-[2rem] flex items-center justify-center text-[8rem] border-2 border-dashed border-saffron/30">
+      🫖
+    </div>
+    <!-- Stat cards -->
+    <div class="absolute -bottom-6 -right-6 bg-white border-[1.5px] border-chai/20 rounded-2xl px-5 py-3 text-center shadow-lg">
+      <div class="font-baloo text-[1.8rem] font-extrabold text-saffron leading-none">12+</div>
+      <div class="text-[0.78rem] text-tapri-muted font-bold mt-1">Years of Chai</div>
+    </div>
+    <div class="absolute -top-6 -left-6 bg-white border-[1.5px] border-chai/20 rounded-2xl px-5 py-3 text-center shadow-lg">
+      <div class="font-baloo text-[1.8rem] font-extrabold text-saffron leading-none">5K+</div>
+      <div class="text-[0.78rem] text-tapri-muted font-bold mt-1">Happy Customers</div>
+    </div>
+  </div>
+
+  <!-- Text content -->
+  <div>
+    <div class="text-[0.78rem] font-extrabold tracking-[2px] uppercase text-saffron mb-1">Our Story</div>
+    <h2 class="font-baloo text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold text-tapri-dark leading-[1.1] mb-4">
+      Born on the roadside, made with love.
+    </h2>
+    <p class="text-base text-tapri-muted leading-relaxed max-w-[480px]">
+      Tapri started as a small chai stall near the railway station — a kettle, a gas stove, and a dream. Over 12 years, we've grown into a full street-food experience while keeping the soul of every bite authentic and honest.
+    </p>
+
+    <!-- Features list -->
+    <div class="mt-7 flex flex-col gap-3">
+      <div class="flex items-center gap-3 text-[0.95rem] font-semibold text-tapri-text">
+        <div class="w-9 h-9 rounded-[10px] bg-saffron-light flex items-center justify-center text-[1.1rem] shrink-0">🌿</div>
+        100% natural spices, no shortcuts
+      </div>
+      <div class="flex items-center gap-3 text-[0.95rem] font-semibold text-tapri-text">
+        <div class="w-9 h-9 rounded-[10px] bg-saffron-light flex items-center justify-center text-[1.1rem] shrink-0">🔥</div>
+        Made to order, served fresh
+      </div>
+      <div class="flex items-center gap-3 text-[0.95rem] font-semibold text-tapri-text">
+        <div class="w-9 h-9 rounded-[10px] bg-saffron-light flex items-center justify-center text-[1.1rem] shrink-0">💚</div>
+        Vegetarian-first, always
+      </div>
+      <div class="flex items-center gap-3 text-[0.95rem] font-semibold text-tapri-text">
+        <div class="w-9 h-9 rounded-[10px] bg-saffron-light flex items-center justify-center text-[1.1rem] shrink-0">📦</div>
+        Eco-friendly packaging
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     REVIEWS
+═══════════════════════════════════════ -->
+<section id="reviews" class="relative z-10 bg-chai-light px-[5%] py-20">
+  <div class="text-[0.78rem] font-extrabold tracking-[2px] uppercase text-saffron mb-1">What People Say</div>
+  <h2 class="font-baloo text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold text-tapri-dark leading-[1.1]">Customer Love</h2>
+
+  <div class="mt-10 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
+
+    <div class="bg-white border-[1.5px] border-chai/20 rounded-[20px] p-6 transition-transform hover:-translate-y-1">
+      <div class="text-base text-yellow-400 tracking-[2px] mb-3">★★★★★</div>
+      <p class="text-[0.95rem] text-tapri-text leading-[1.65] mb-5 italic">
+        "The masala chai here is unmatched. Reminds me of my college canteen days — thick, spicy, and perfectly sweet. Will visit again!"
+      </p>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-saffron-light flex items-center justify-center text-xl shrink-0">😊</div>
+        <div>
+          <div class="font-extrabold text-[0.9rem] text-tapri-dark">Priya Sharma</div>
+          <div class="text-[0.78rem] text-tapri-muted">Mumbai, Maharashtra</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border-[1.5px] border-chai/20 rounded-[20px] p-6 transition-transform hover:-translate-y-1">
+      <div class="text-base text-yellow-400 tracking-[2px] mb-3">★★★★★</div>
+      <p class="text-[0.95rem] text-tapri-text leading-[1.65] mb-5 italic">
+        "Vada pav is absolutely amazing — crispy vada, soft pav, green chutney done right. One of the best bites in the city, no exaggeration."
+      </p>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-saffron-light flex items-center justify-center text-xl shrink-0">🙂</div>
+        <div>
+          <div class="font-extrabold text-[0.9rem] text-tapri-dark">Rohan Patel</div>
+          <div class="text-[0.78rem] text-tapri-muted">Ahmedabad, Gujarat</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border-[1.5px] border-chai/20 rounded-[20px] p-6 transition-transform hover:-translate-y-1">
+      <div class="text-base text-yellow-400 tracking-[2px] mb-3">★★★★☆</div>
+      <p class="text-[0.95rem] text-tapri-text leading-[1.65] mb-5 italic">
+        "Pav bhaji was loaded with butter and just the right level of spice. Portions are generous and prices are extremely fair. Highly recommended!"
+      </p>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-saffron-light flex items-center justify-center text-xl shrink-0">😄</div>
+        <div>
+          <div class="font-extrabold text-[0.9rem] text-tapri-dark">Anika Mehta</div>
+          <div class="text-[0.78rem] text-tapri-muted">Surat, Gujarat</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     CTA
+═══════════════════════════════════════ -->
+<section id="contact" class="relative z-10 bg-tapri-dark text-center px-[5%] py-20 overflow-hidden">
+  <!-- Decorative bg text -->
+  <div class="absolute text-[18rem] opacity-[0.04] top-[-3rem] left-[-3rem] pointer-events-none leading-none select-none">☕</div>
+  <div class="absolute text-[14rem] opacity-[0.05] bottom-[-2rem] right-[-2rem] pointer-events-none leading-none select-none">🫙</div>
+
+  <div class="relative z-10">
+    <div class="text-[0.78rem] font-extrabold tracking-[2px] uppercase text-[#FF9A60] mb-1">Come Hungry</div>
+    <h2 class="font-baloo text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold text-white leading-[1.1] max-w-[600px] mx-auto">
+      Ready for some Tapri magic?
+    </h2>
+    <p class="text-base text-white/55 max-w-[480px] mx-auto leading-relaxed my-4">
+      Order online or visit us. Every bite is made with love and a generous pinch of spice.
+    </p>
+    <button onclick="scrollToMenu()"
+      class="bg-saffron hover:bg-saffron-dark text-white font-nunito font-extrabold text-[1.05rem] px-10 py-4 rounded-full border-none cursor-pointer transition-all hover:-translate-y-0.5">
+      Order Now →
+    </button>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer class="bg-[#110A02] text-white/50 px-[5%] py-10 flex flex-wrap items-center justify-between gap-4 text-[0.88rem]">
+  <a href="#" class="font-baloo text-2xl font-extrabold text-saffron no-underline">Tapri</a>
+  <span>© 2024 Tapri Street Food. All rights reserved.</span>
+  <div class="flex gap-6">
+    <a href="#" class="text-white/40 hover:text-saffron transition-colors no-underline">Privacy</a>
+    <a href="#" class="text-white/40 hover:text-saffron transition-colors no-underline">Terms</a>
+    <a href="#" class="text-white/40 hover:text-saffron transition-colors no-underline">Contact</a>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════
+     CART FAB
+═══════════════════════════════════════ -->
+<button id="cartFab" onclick="showCart()"
+  class="hidden fixed bottom-8 right-8 bg-saffron hover:bg-saffron-dark text-white border-none rounded-full px-6 py-3 font-nunito font-extrabold text-[0.95rem] cursor-pointer z-[200] shadow-[0_6px_24px_rgba(255,107,26,0.4)] transition-all hover:-translate-y-0.5 items-center gap-2">
+  🛒 Cart <span id="cartCount" class="bg-white text-saffron-dark rounded-full w-[22px] h-[22px] flex items-center justify-center text-[0.8rem] font-black">0</span>
+</button>
+
+<!-- TOAST -->
+<div id="toast"
+  class="fixed bottom-8 left-1/2 -translate-x-1/2 translate-y-20 bg-tapri-dark text-white px-6 py-3 rounded-full font-bold text-[0.9rem] z-[300] transition-transform duration-[350ms] whitespace-nowrap"
+  style="transition-timing-function: cubic-bezier(.34,1.56,.64,1)">
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+  /* ── Tab active style helper ── */
+  const ACTIVE_TAB   = ['bg-saffron','text-white','border-saffron'];
+  const INACTIVE_TAB = ['bg-transparent','text-tapri-muted','border-chai/20'];
+
+  /* ── Menu data ── */
+  const menuItems = [
+    { id:1,  name:'Masala Chai',      desc:'Strong spiced tea brewed with ginger, cardamom, and love.',          price:20, emoji:'☕', category:'chai',   badge:''           },
+    { id:2,  name:'Cutting Chai',     desc:'Half a cup of bold kadak chai — classic tapri style.',               price:15, emoji:'🫖', category:'chai',   badge:'bestseller' },
+    { id:3,  name:'Adrak Chai',       desc:'Ginger-forward chai with a warming punch.',                          price:18, emoji:'🍵', category:'chai',   badge:''           },
+    { id:4,  name:'Vada Pav',         desc:"Mumbai's iconic street burger — spicy potato vada in soft pav.",     price:30, emoji:'🥙', category:'snacks', badge:'spicy'      },
+    { id:5,  name:'Samosa (2 pcs)',   desc:'Crispy pastry stuffed with spiced potatoes and peas.',               price:25, emoji:'🥔', category:'snacks', badge:''           },
+    { id:6,  name:'Dabeli',           desc:'Spiced potato filling, pomegranate, peanuts in a soft bun.',         price:35, emoji:'🧆', category:'snacks', badge:'bestseller' },
+    { id:7,  name:'Bhel Puri',        desc:'Puffed rice tossed with tamarind chutney, tomatoes, and sev.',       price:30, emoji:'🥗', category:'snacks', badge:''           },
+    { id:8,  name:'Pav Bhaji',        desc:'Spiced vegetable mash with butter-toasted pav. Loaded.',             price:70, emoji:'🫓', category:'meals',  badge:'popular'    },
+    { id:9,  name:'Maggi Special',    desc:'Soupy Maggi with extra veggies, masala, and one boiled egg option.', price:50, emoji:'🍜', category:'meals',  badge:''           },
+    { id:10, name:'Misal Pav',        desc:'Fiery sprouted moth curry topped with farsan, served with pav.',     price:65, emoji:'🍲', category:'meals',  badge:'spicy'      },
+    { id:11, name:'Gulab Jamun (2 pcs)', desc:'Soft milk-solid dumplings soaked in rose-scented sugar syrup.',  price:30, emoji:'🍮', category:'sweet',  badge:''           },
+    { id:12, name:'Shrikhand',        desc:'Hung curd sweetened with sugar and cardamom. Chilled.',              price:40, emoji:'🍨', category:'sweet',  badge:''           },
+  ];
+
+  let cart = {};
+
+  function badgeHTML(badge) {
+    if (!badge) return '';
+    const isSpicy = badge === 'spicy';
+    const bg  = isSpicy ? 'bg-saffron-dark' : 'bg-tgreen';
+    const txt = isSpicy ? '🌶 Spicy' : badge === 'bestseller' ? '⭐ Bestseller' : '🔥 Popular';
+    return `<span class="absolute top-2.5 left-2.5 ${bg} text-white text-[0.7rem] font-extrabold px-3 py-[3px] rounded-full tracking-[0.5px]">${txt}</span>`;
+  }
+
+  function renderMenu(filter) {
+    const grid = document.getElementById('menuGrid');
+    const list = filter === 'all' ? menuItems : menuItems.filter(i => i.category === filter);
+    grid.innerHTML = list.map(item => `
+      <div class="bg-tapri-cream border-[1.5px] border-chai/20 rounded-[20px] overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(255,107,26,0.13)]">
+        <div class="w-full aspect-[4/3] bg-saffron-light flex items-center justify-center text-[4rem] relative overflow-hidden">
+          ${badgeHTML(item.badge)}
+          ${item.emoji}
+        </div>
+        <div class="p-4">
+          <div class="font-baloo text-[1.15rem] font-bold text-tapri-dark mb-1">${item.name}</div>
+          <div class="text-[0.85rem] text-tapri-muted leading-relaxed mb-4">${item.desc}</div>
+          <div class="flex items-center justify-between">
+            <span class="font-baloo text-[1.2rem] font-extrabold text-saffron">₹${item.price}</span>
+            <button onclick="addToCart(${item.id})"
+              class="w-9 h-9 rounded-full bg-saffron hover:bg-saffron-dark text-white border-none text-[1.4rem] font-bold cursor-pointer flex items-center justify-center transition-all hover:scale-110 leading-none">
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterMenu(cat, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('bg-saffron','text-white','border-saffron');
+      b.classList.add('bg-transparent','text-tapri-muted','border-chai/20');
+    });
+    btn.classList.remove('bg-transparent','text-tapri-muted','border-chai/20');
+    btn.classList.add('bg-saffron','text-white','border-saffron');
+    renderMenu(cat);
+  }
+
+  function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    updateCartUI();
+    const item = menuItems.find(i => i.id === id);
+    showToast(`${item.emoji} ${item.name} added!`);
+  }
+
+  function updateCartUI() {
+    const total = Object.values(cart).reduce((a,b) => a+b, 0);
+    const fab = document.getElementById('cartFab');
+    document.getElementById('cartCount').textContent = total;
+    fab.style.display = total > 0 ? 'flex' : 'none';
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('translate-y-20');
+    t.classList.add('translate-y-0');
+    setTimeout(() => { t.classList.add('translate-y-20'); t.classList.remove('translate-y-0'); }, 2200);
+  }
+
+  function showCart() {
+    const items = Object.entries(cart).map(([id, qty]) => {
+      const item = menuItems.find(i => i.id == id);
+      return `${item.emoji} ${item.name} x${qty} = ₹${item.price * qty}`;
+    });
+    const total = Object.entries(cart).reduce((sum,[id,qty]) => sum + menuItems.find(i=>i.id==id).price*qty, 0);
+    alert(`🛒 Your Cart:\n\n${items.join('\n')}\n\n── Total: ₹${total} ──\n\nThank you for choosing Tapri! 🙏`);
+  }
+
+  function scrollToMenu() {
+    document.getElementById('menu').scrollIntoView({ behavior:'smooth' });
+  }
+
+  /* ── Mobile nav ── */
+  let menuOpen = false;
+
+  function toggleMobileMenu() {
+    menuOpen = !menuOpen;
+    const el = document.getElementById('mobileMenu');
+    const hb1 = document.getElementById('hb1');
+    const hb2 = document.getElementById('hb2');
+    const hb3 = document.getElementById('hb3');
+
+    if (menuOpen) {
+      el.classList.remove('hidden');
+      el.classList.add('open');
+      hb1.style.transform = 'rotate(45deg) translate(5px,5px)';
+      hb2.style.opacity   = '0';
+      hb3.style.transform = 'rotate(-45deg) translate(5px,-5px)';
+    } else {
+      el.classList.add('hidden');
+      el.classList.remove('open');
+      hb1.style.transform = '';
+      hb2.style.opacity   = '';
+      hb3.style.transform = '';
+    }
+  }
+
+  function closeMobileMenu() {
+    menuOpen = false;
+    document.getElementById('mobileMenu').classList.add('hidden');
+    document.getElementById('hb1').style.transform = '';
+    document.getElementById('hb2').style.opacity   = '';
+    document.getElementById('hb3').style.transform = '';
+  }
+
+  /* Close mobile menu on outside click */
+  document.addEventListener('click', e => {
+    if (menuOpen && !e.target.closest('nav') && !e.target.closest('#mobileMenu')) {
+      closeMobileMenu();
+    }
+  });
+
+  /* Initialise first tab as active */
+  document.querySelector('.tab-btn').classList.add('bg-saffron','text-white','border-saffron');
+  document.querySelector('.tab-btn').classList.remove('text-tapri-muted');
+
+  renderMenu('all');
+</script>
+</body>
+</html>

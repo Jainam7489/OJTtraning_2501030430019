@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tailwind Flexbox Layout</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+  <!-- Main Container -->
+  <div class="w-full max-w-6xl p-6">
+
+    <!-- Flexbox Layout -->
+    <div class="flex flex-col md:flex-row gap-6">
+
+      <!-- Left Sidebar -->
+      <div class="bg-blue-500 text-white p-6 rounded-xl flex-1">
+        <h2 class="text-2xl font-bold mb-4">Sidebar</h2>
+        <p>
+          This is the sidebar section using Tailwind CSS flex utilities.
+        </p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="bg-white shadow-lg p-6 rounded-xl flex-[2]">
+        <h1 class="text-3xl font-bold mb-4 text-gray-800">
+          Main Content
+        </h1>
+
+        <p class="text-gray-600 mb-4">
+          This layout is built using Tailwind CSS Flexbox classes.
+          On mobile screens, items stack vertically.
+          On medium and larger screens, they appear side by side.
+        </p>
+
+        <!-- Inner Flex Cards -->
+        <div class="flex flex-col sm:flex-row gap-4 mt-6">
+
+          <div class="bg-pink-500 text-white p-5 rounded-lg flex-1 text-center">
+            Card 1
+          </div>
+
+          <div class="bg-green-500 text-white p-5 rounded-lg flex-1 text-center">
+            Card 2
+          </div>
+
+          <div class="bg-yellow-500 text-white p-5 rounded-lg flex-1 text-center">
+            Card 3
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

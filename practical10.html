@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form with Validation</title>
+    <style>
+        /* CSS STYLING */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+        }
+
+        /* Error state styling applied via JS */
+        input.input-error {
+            border-color: #dc3545;
+            background-color: #fff8f8;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Create Account</h2>
+        <form id="registrationForm" novalidate>
+            
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter username">
+                <div class="error-message" id="usernameError"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter email">
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="At least 8 characters">
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Re-enter password">
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            // Prevent the default browser form submission refresh
+            event.preventDefault();
+            
+            // Step 1: Clear out any previous error messages and styles
+            clearErrors();
+
+            // Step 2: Grab the values entered by the user
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Flag tracking overall form validity
+            let isValid = true;
+
+            // Step 3: Run Validation Rules
+            
+            // Username Validation
+            if (username === "") {
+                showError('usernameError', 'Username is required.');
+                isValid = false;
+            } else if (username.length < 3) {
+                showError('usernameError', 'Username must be at least 3 characters.');
+                isValid = false;
+            }
+
+            // Email Validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === "") {
+                showError('emailError', 'Email is required.');
+                isValid = false;
+            } else if (!emailRegex.test(email)) {
+                showError('emailError', 'Please enter a valid email address.');
+                isValid = false;
+            }
+
+            // Password Validation
+            if (password === "") {
+                showError('passwordError', 'Password is required.');
+                isValid = false;
+            } else if (password.length < 8) {
+                showError('passwordError', 'Password must be at least 8 characters long.');
+                isValid = false;
+            }
+
+            // Confirm Password Validation
+            if (confirmPassword === "") {
+                showError('confirmPasswordError', 'Please confirm your password.');
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                showError('confirmPasswordError', 'Passwords do not match.');
+                isValid = false;
+            }
+
+            // Step 4: Final Submission Check
+            if (isValid) {
+                alert('Success! Form validation passed.');
+                // You can add your API fetch call or form submission method here.
+            }
+        });
+
+        // Function to inject error text and style the input borders red
+        function showError(errorId, message) {
+            const errorElement = document.getElementById(errorId);
+            errorElement.innerText = message;
+            errorElement.style.display = 'block';
+            
+            // Grabs the input directly above the error container and adds the error class
+            errorElement.previousElementSibling.classList.add('input-error');
+        }
+
+        // Function to wipe out old errors before re-testing
+        function clearErrors() {
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => {
+                msg.innerText = '';
+                msg.style.display = 'none';
+            });
+
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.classList.remove('input-error');
+            });
+        }
+    </script>
+</body>
+</html>
